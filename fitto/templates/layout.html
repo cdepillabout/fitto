@@ -11,6 +11,35 @@
             <div class=navigation>
                 <a href="{{ url_for('index') }}">HOME</a>
             </div>
+            <div class=login>
+                <form method="POST" action="{{ url_for('login') }}">
+                    {{ login_form.hidden_tag() }}
+                    {{ login_form.username.label }}: {{ login_form.username }}
+                    {{ login_form.password.label }}: {{ login_form.password }}
+                    {{ login_form.submit }}
+                </form>
+            </div>
+            {#
+            <div class=errors>
+                {% if form.errors %}
+                ERRORS:
+                {% for error in form.errors %}
+                {{ error }}
+                {% endfor %}
+                {% endif %}
+            </div>
+            #}
+            {% with messages = get_flashed_messages() %}
+            {% if messages %}
+            <div class=flashes>
+                <ul class=flash>
+                    {% for message in messages %}
+                    <li>{{ message }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+            {% endif %}
+            {% endwith %}
             <div class=body>
                 {% block body %}{% endblock %}
             </div>
