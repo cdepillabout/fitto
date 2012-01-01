@@ -33,11 +33,11 @@ class RedirectForm(Form):
         return redirect(target or url_for(endpoint, **values))
 
 class LoginForm(RedirectForm):
-    username = TextField('Username',
+    login_username = TextField('Username',
             [validators.Length(min=4, max=25), validators.Required()])
-    password = PasswordField('Password',
-            [validators.Length(min=6, max=100), validators.Required()])
-    submit = SubmitField('Login')
+    login_password = PasswordField('Password',
+            [validators.Length(min=5, max=100), validators.Required()])
+    login_submit = SubmitField('Login')
 
     def validate(self):
         # regular validation
@@ -45,17 +45,27 @@ class LoginForm(RedirectForm):
         if not rv:
             return False
 
-        user = User.query.filter_by(username=self.username.data).first()
-        if self.user is None:
-            self.username.errors.append('unknown username or invalid password')
+        user = User.query.filter_by(username=self.login_username.data).first()
+        if user is None:
+            self.login_username.errors.append('unknown username or invalid password')
             return False
 
-        if not user.check_password(self.password.data):
+        if not user.check_password(self.login_password.data):
             self.password.errors.append('unknown username or invalid password')
             return False
 
         self.user = user
         return True
+
+class CreateAccountForm(Form):
+    ca_username = TextField('Username',
+            [validators.Length(min=4, max=25), validators.Required()])
+    ca_password = PasswordField('Password',
+            [validators.Length(min=5, max=100), validators.Required()])
+    ca_email = TextField('Email',
+            [validators.Length(max=120), validators.Email(), validators.Optional()])
+    ca_submit = SubmitField('Login')
+
 
 class ChangePasswordForm(LoginForm):
     password = PasswordField('Old Password',
